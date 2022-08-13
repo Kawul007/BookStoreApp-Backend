@@ -1,4 +1,4 @@
-# BookStoreApp-Backend【主要是针对管理员端（web端）和用户端（小程序端）的相关数据库操作和一些接口的设计和编写】
+##BookStoreApp-Backend【主要是针对管理员端（web端）和用户端（小程序端）的相关数据库操作和一些接口的设计和编写】
 #主要实用技术有：SpringBoot + Mybatis_plus + MySQL，下面是一些接口的编写：
 * 图书相关接口：
 ```Java
@@ -68,4 +68,41 @@
 
         return Response.success("成功", list);
     }
-    ```
+    * 用户收藏/取消收藏接口
+    ```java
+     // 收藏接口
+    @GetMapping("/assign/{bookId}/{userId}")
+    public Response assignBook(@PathVariable("bookId") Integer bookId,
+                               @PathVariable("userId") Integer userId
+                        ){
+                 Boolean flag =   collectionService.assignBook(bookId,userId);
+    return flag? Response.success("成功"): Response.error();
+    }
+
+    /**
+     * 根据用户id获取收藏的书本
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getCollectionBook/{userId}")
+    public Response getCollectionBook(
+                        @PathVariable("userId") Integer userId
+    ){
+//                TODO 因为没做登录，所以不用threadlocal的方式及逆行用户信息的获取，直接前端传死用户id
+        List<BookItem> list=collectionService.getCollectionBook(userId);
+        return Response.success("成功",list);
+    }
+
+    /**
+     * 取消收藏
+     * @param bookId
+     * @param userId
+     * @return
+     */
+    @GetMapping("/cancel/{bookId}/{userId}")
+    public Response cancleCollection(@PathVariable("bookId") Integer bookId,
+                                     @PathVariable("userId") Integer userId
+    ){
+        Boolean flag =   collectionService.cancleCollection(bookId,userId);
+        return flag? Response.success("成功"): Response.error();
+    }
